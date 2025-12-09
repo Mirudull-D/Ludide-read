@@ -14,18 +14,50 @@
 })();
 
 // ======= Read Ease Mode =======
-chrome.storage.sync.get(["readEaseMode", "fontSize"], (data) => {
-  if (data.readEaseMode) applyReadEaseMode(data.fontSize || 16);
-});
+chrome.storage.sync.get(
+  ["readEaseMode", "fontSize", "focusContrastMode"],
+  (data) => {
+    if (data.readEaseMode) applyReadEaseMode(data.fontSize || 16);
+    if (data.focusContrastMode) enableFocusContrast();
+  }
+);
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.action === "updateReadEase") {
-    applyReadEaseMode(msg.fontSize);
+    const enabled = msg.enabled ?? true;
+    if (enabled) applyReadEaseMode(msg.fontSize);
+    else removeReadEaseMode();
+  }
+
+  if (msg.action === "updateFocusContrast") {
+    const enabled = msg.enabled ?? false;
+    if (enabled) enableFocusContrast();
+    else disableFocusContrast();
   }
 });
 
-function applyReadEaseMode(fontSize) {
+function applyReadEaseMode(fontSize = 16) {
   document.body.classList.add("read-ease-mode");
+  document.documentElement.classList.add("read-ease-mode");
+  setFontSize(fontSize);
+}
+
+function removeReadEaseMode() {
+  document.body.classList.remove("read-ease-mode");
+  document.documentElement.classList.remove("read-ease-mode");
+}
+
+function enableFocusContrast() {
+  document.body.classList.add("focus-contrast-mode");
+  document.documentElement.classList.add("focus-contrast-mode");
+}
+
+function disableFocusContrast() {
+  document.body.classList.remove("focus-contrast-mode");
+  document.documentElement.classList.remove("focus-contrast-mode");
+}
+
+function setFontSize(fontSize = 16) {
   const elements = document.querySelectorAll("body, body *");
   elements.forEach((el) => (el.style.fontSize = fontSize + "px"));
 }
