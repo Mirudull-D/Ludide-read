@@ -1,16 +1,70 @@
-/* ===== Focus Contrast Mode - Dark Theme ===== */
+/* ===== Focus Contrast Mode - Comprehensive Dark Theme ===== */
+
+/* Base dark theme for html and body */
 body.focus-contrast-mode,
 html.focus-contrast-mode {
   background-color: #121212 !important;
   color: #f5f5f5 !important;
 }
 
-body.focus-contrast-mode *,
-html.focus-contrast-mode * {
+/* Apply dark background and text to ALL elements except media */
+body.focus-contrast-mode *:not(img):not(video):not(svg):not(picture):not(canvas),
+html.focus-contrast-mode *:not(img):not(video):not(svg):not(picture):not(canvas) {
+  background-color: #121212 !important;
   color: #f5f5f5 !important;
+  border-color: #444 !important;
 }
 
-/* Apply dark background to common containers */
+/* Force override for specific text and UI elements */
+body.focus-contrast-mode p,
+body.focus-contrast-mode span,
+body.focus-contrast-mode div,
+body.focus-contrast-mode li,
+body.focus-contrast-mode a,
+body.focus-contrast-mode h1,
+body.focus-contrast-mode h2,
+body.focus-contrast-mode h3,
+body.focus-contrast-mode h4,
+body.focus-contrast-mode h5,
+body.focus-contrast-mode h6 {
+  background-color: #121212 !important;
+  color: #f5f5f5 !important;
+  border-color: #444 !important;
+}
+
+/* Table elements - headers, cells, rows */
+body.focus-contrast-mode table,
+body.focus-contrast-mode th,
+body.focus-contrast-mode td,
+body.focus-contrast-mode tr,
+body.focus-contrast-mode thead,
+body.focus-contrast-mode tbody,
+body.focus-contrast-mode tfoot {
+  background-color: #121212 !important;
+  color: #f5f5f5 !important;
+  border-color: #444 !important;
+}
+
+/* Table cells specifically */
+body.focus-contrast-mode td,
+body.focus-contrast-mode th {
+  background-color: #121212 !important;
+  color: #f5f5f5 !important;
+  border-color: #444 !important;
+}
+
+/* Form elements */
+body.focus-contrast-mode button,
+body.focus-contrast-mode input,
+body.focus-contrast-mode select,
+body.focus-contrast-mode textarea,
+body.focus-contrast-mode option {
+  background-color: #121212 !important;
+  color: #f5f5f5 !important;
+  border-color: #444 !important;
+}
+
+/* Common container elements */
 body.focus-contrast-mode main,
 body.focus-contrast-mode article,
 body.focus-contrast-mode section,
@@ -18,24 +72,36 @@ body.focus-contrast-mode header,
 body.focus-contrast-mode footer,
 body.focus-contrast-mode nav,
 body.focus-contrast-mode aside,
-body.focus-contrast-mode div {
+body.focus-contrast-mode ul,
+body.focus-contrast-mode ol {
   background-color: #121212 !important;
+  color: #f5f5f5 !important;
+  border-color: #444 !important;
 }
 
-/* Keep images unchanged - do not invert */
+/* Links */
+body.focus-contrast-mode a {
+  color: #f5f5f5 !important;
+}
+
+body.focus-contrast-mode a:hover,
+body.focus-contrast-mode a:visited {
+  color: #f5f5f5 !important;
+}
+
+/* Keep images, videos, and SVGs unchanged - do not invert or modify */
 body.focus-contrast-mode img,
+body.focus-contrast-mode video,
 body.focus-contrast-mode svg,
-body.focus-contrast-mode picture {
+body.focus-contrast-mode picture,
+body.focus-contrast-mode canvas {
   filter: none !important;
   opacity: 1 !important;
+  background-color: transparent !important;
+  border-color: #444 !important;
 }
 
-/* Ensure buttons and inputs remain readable */
-body.focus-contrast-mode button,
-body.focus-contrast-mode input,
-body.focus-contrast-mode select,
-body.focus-contrast-mode textarea {
-  background-color: #2a2a2a !important;
-  color: #f5f5f5 !important;
+/* Ensure all borders use dark theme color */
+body.focus-contrast-mode * {
   border-color: #444 !important;
 }
