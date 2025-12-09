@@ -136,9 +136,20 @@ document.addEventListener("click", async (e) => {
     if (data.type === "https://mediawiki.org/wiki/HyperSwitch/errors/not_found")
       throw new Error("No page found");
 
+    // Truncate extract to first 2 sentences
+    let truncatedExtract = data.extract || "No description available.";
+    if (data.extract) {
+      const sentences = data.extract.split(".");
+      if (sentences.length >= 2) {
+        truncatedExtract = sentences[0].trim() + ". " + sentences[1].trim() + ".";
+      } else if (sentences.length === 1 && sentences[0].trim()) {
+        truncatedExtract = sentences[0].trim() + ".";
+      }
+    }
+
     let html = `
             <strong>${data.title || word}</strong>
-            <p>${data.extract || "No description available."}</p>
+            <p>${truncatedExtract}</p>
             <p style="margin-top:10px;font-size:14px;color:#888;">
                 Generating audio...
             </p>
