@@ -13,12 +13,145 @@
   document.head.appendChild(openDyslexicLink);
 })();
 
+// ======= Dyslexia-Friendly Focus Ruler =======
+// Creates a horizontal ruler that follows the cursor to help with reading focus
+// Only active when toggle is enabled in popup
+let focusRulerEnabled = false;
+let ruler = null;
+let isVisible = false;
+let rafId = null;
+let mousemoveHandler = null;
+let mouseleaveHandler = null;
+
+// Get the line height at cursor position for better alignment
+function getLineHeightAtPoint(x, y) {
+  const element = document.elementFromPoint(x, y);
+  if (!element) return 1.5;
+
+  const computedStyle = window.getComputedStyle(element);
+  const lineHeight = parseFloat(computedStyle.lineHeight);
+  const fontSize = parseFloat(computedStyle.fontSize);
+
+  // Return line height in pixels, default to 1.5em if not valid
+  return isNaN(lineHeight) ? fontSize * 1.5 : lineHeight;
+}
+
+// Update ruler position smoothly
+function updateRulerPosition(e) {
+  if (!focusRulerEnabled || !ruler) return;
+
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+  }
+
+  rafId = requestAnimationFrame(() => {
+    if (!focusRulerEnabled || !ruler) return;
+
+    const y = e.clientY;
+    const lineHeight = getLineHeightAtPoint(e.clientX, y);
+    
+    // Position ruler centered on cursor with line height (ruler is 3em, so center it)
+    ruler.style.top = `${y - 1.5 * lineHeight}px`;
+    
+    // Show ruler when over text content (not over images, buttons, etc.)
+    const target = e.target;
+    const isTextContent = target && (
+      target.tagName === 'P' ||
+      target.tagName === 'SPAN' ||
+      target.tagName === 'DIV' ||
+      target.tagName === 'LI' ||
+      target.tagName === 'H1' ||
+      target.tagName === 'H2' ||
+      target.tagName === 'H3' ||
+      target.tagName === 'H4' ||
+      target.tagName === 'H5' ||
+      target.tagName === 'H6' ||
+      target.tagName === 'A' ||
+      (target.nodeType === Node.TEXT_NODE && target.parentElement)
+    );
+
+    // Don't show over interactive elements or extension overlays
+    const isInteractive = target && (
+      target.tagName === 'BUTTON' ||
+      target.tagName === 'INPUT' ||
+      target.tagName === 'SELECT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.closest('.lucid-card') ||
+      target.closest('#lucid-focus-ruler')
+    );
+
+    if (isTextContent && !isInteractive && !isVisible) {
+      ruler.classList.add('visible');
+      isVisible = true;
+    } else if ((!isTextContent || isInteractive) && isVisible) {
+      ruler.classList.remove('visible');
+      isVisible = false;
+    }
+  });
+}
+
+// Enable focus ruler functionality
+function enableFocusRuler() {
+  if (focusRulerEnabled) return; // Already enabled
+
+  focusRulerEnabled = true;
+
+  // Create the ruler element if it doesn't exist
+  if (!ruler) {
+    ruler = document.createElement("div");
+    ruler.id = "lucid-focus-ruler";
+    document.body.appendChild(ruler);
+  }
+
+  // Add event listeners
+  mousemoveHandler = (e) => updateRulerPosition(e);
+  mouseleaveHandler = () => {
+    if (isVisible && ruler) {
+      ruler.classList.remove('visible');
+      isVisible = false;
+    }
+  };
+
+  document.addEventListener('mousemove', mousemoveHandler, { passive: true });
+  document.addEventListener('mouseleave', mouseleaveHandler, { passive: true });
+}
+
+// Disable focus ruler functionality
+function disableFocusRuler() {
+  if (!focusRulerEnabled) return; // Already disabled
+
+  focusRulerEnabled = false;
+
+  // Remove event listeners
+  if (mousemoveHandler) {
+    document.removeEventListener('mousemove', mousemoveHandler);
+    mousemoveHandler = null;
+  }
+  if (mouseleaveHandler) {
+    document.removeEventListener('mouseleave', mouseleaveHandler);
+    mouseleaveHandler = null;
+  }
+
+  // Hide and remove ruler
+  if (ruler) {
+    ruler.classList.remove('visible');
+    isVisible = false;
+  }
+
+  // Cancel any pending animation frames
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+}
+
 // ======= Read Ease Mode =======
 chrome.storage.sync.get(
-  ["readEaseMode", "fontSize", "focusContrastMode"],
+  ["readEaseMode", "fontSize", "focusContrastMode", "focusRulerEnabled"],
   (data) => {
     if (data.readEaseMode) applyReadEaseMode(data.fontSize || 16);
     if (data.focusContrastMode) enableFocusContrast();
+    if (data.focusRulerEnabled) enableFocusRuler();
   }
 );
 
@@ -33,6 +166,12 @@ chrome.runtime.onMessage.addListener((msg) => {
     const enabled = msg.enabled ?? false;
     if (enabled) enableFocusContrast();
     else disableFocusContrast();
+  }
+
+  if (msg.action === "updateFocusRuler") {
+    const enabled = msg.enabled ?? false;
+    if (enabled) enableFocusRuler();
+    else disableFocusRuler();
   }
 });
 
