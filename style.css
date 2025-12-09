@@ -1,0 +1,63 @@
+/* ===== Read Ease Mode ===== */
+body.read-ease-mode, body.read-ease-mode * {
+    font-family: 'Lexend', 'OpenDyslexic', sans-serif !important;
+    line-height: 1.7 !important;
+    letter-spacing: 0.04em !important;
+    color: #111 !important;
+}
+
+body.read-ease-mode p,
+body.read-ease-mode li,
+body.read-ease-mode span {
+    margin-bottom: 1.2em !important;
+}
+
+/* ===== Floating Cards ===== */
+.lucid-card {
+    font-family: 'OpenDyslexic', sans-serif;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    padding: 12px;
+    background: #fefefe;
+    max-width: 280px;
+    z-index: 99999;
+    word-break: break-word;
+    opacity: 0;
+    animation: fadeIn 0.2s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.lucid-card strong {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.lucid-card p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.lucid-card button {
+    margin-top: 6px;
+    background: #9DC183; /* Sage green */
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s ease;
+}
+
+.lucid-card button:hover {
+    background: #82b16f;
+}
+
+.lucid-card a {
+    color: #3a7afe;
+    text-decoration: underline;
+}
