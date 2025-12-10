@@ -39,6 +39,16 @@ function applySettings() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs || !tabs[0]) return;
     
+    // Send toggleReadEase message when ReadEase mode is toggled
+    chrome.tabs.sendMessage(tabs[0].id, {
+      toggleReadEase: true
+    }, () => {
+      // Ignore errors (content script might not be loaded on some pages)
+      if (chrome.runtime.lastError) {
+        console.log("Content script not available:", chrome.runtime.lastError.message);
+      }
+    });
+    
     chrome.tabs.sendMessage(tabs[0].id, {
       action: "updateReadEase",
       enabled: readEaseMode,

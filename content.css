@@ -1,3 +1,38 @@
+/* ===== Read Ease Mode - Dyslexia-Friendly Styling ===== */
+body.read-ease-mode, body.read-ease-mode * {
+    font-family: 'Lexend', 'OpenDyslexic', sans-serif !important;
+    line-height: 1.8 !important;
+    letter-spacing: 0.05em !important;
+    word-spacing: 0.1em !important;
+    font-weight: 600 !important;
+    background-color: #fafafa !important;
+    margin-bottom: 1.1em !important;
+    color: #111 !important;
+}
+
+/* Ensure images and layout are not distorted */
+body.read-ease-mode img,
+body.read-ease-mode video,
+body.read-ease-mode svg,
+body.read-ease-mode canvas,
+body.read-ease-mode picture {
+    background-color: transparent !important;
+    filter: none !important;
+}
+
+/* Make links underline and bold */
+body.read-ease-mode a {
+    text-decoration: underline !important;
+    font-weight: 700 !important;
+}
+
+/* Improve paragraph spacing */
+body.read-ease-mode p,
+body.read-ease-mode li,
+body.read-ease-mode span {
+    margin-bottom: 1.1em !important;
+}
+
 /* ===== Focus Contrast Mode - Comprehensive Dark Theme ===== */
 
 /* Base dark theme for html and body */
@@ -106,23 +141,53 @@ body.focus-contrast-mode * {
   border-color: #444 !important;
 }
 
-/* ===== Dyslexia-Friendly Focus Ruler ===== */
-/* Horizontal ruler that follows cursor/hovered text lines */
+/* ===== Focus Ruler as Visual Lens / Polarizing Strip ===== */
+/* Uses CSS blend modes to invert contrast only within the ruler area */
+/* No DOM manipulation - pure visual overlay effect */
+
 #lucid-focus-ruler {
   position: fixed;
   left: 0;
   width: 100%;
   height: 3em; /* Doubled from 1.5em for better visibility */
-  background-color: #F4EEC7;
+  /* Use blend mode to invert colors underneath the ruler */
+  mix-blend-mode: difference;
+  /* Background color that works with difference blend mode */
+  /* White background will invert dark to light, light to dark */
+  background-color: #ffffff;
   border-top: 1px solid #6B6B6B;
   border-bottom: 1px solid #6B6B6B;
   pointer-events: none;
   z-index: 99998;
   opacity: 0;
   transition: opacity 0.15s ease;
-  mix-blend-mode: multiply;
+  /* Isolate the blend mode effect to only affect content underneath */
+  isolation: isolate;
 }
 
 #lucid-focus-ruler.visible {
-  opacity: 0.85;
+  opacity: 1;
+}
+
+/* Ensure images, videos, and SVGs are not affected by the blend mode */
+#lucid-focus-ruler img,
+#lucid-focus-ruler video,
+#lucid-focus-ruler svg,
+#lucid-focus-ruler picture {
+  mix-blend-mode: normal !important;
+}
+/* ===== Focus Contrast Mode: Transparent Ruler with White Background Effect ===== */
+
+body.focus-contrast-mode #lucid-focus-ruler {
+  display: none !important;
+  mix-blend-mode: normal !important;
+  color: #121212;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  isolation: isolate !important;
+}
+
+#lucid-focus-ruler.contrast-active {
+  /* marker: ensure rule block isn't empty for linters. */
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
