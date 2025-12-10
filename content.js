@@ -115,6 +115,35 @@ function playBase64Audio(base64, mimeType = "audio/mpeg") {
   audio.play();
 }
 
+// ======= Word Chunking Helper =======
+function chunkWord(word) {
+  const chunks = [];
+  let i = 0;
+
+  while (i < word.length) {
+    if (word.length - i === 4) {
+      chunks.push(word.slice(i, i + 2));
+      chunks.push(word.slice(i + 2, i + 4));
+      break;
+    }
+    if (word.length - i === 3) {
+      chunks.push(word.slice(i, i + 3));
+      break;
+    }
+    chunks.push(word.slice(i, i + 2));
+    i += 2;
+  }
+
+  return chunks;
+}
+
+// ======= Text Trimming Utility =======
+function trimAfterSecondFullStop(text) {
+  const parts = text.split(".");
+  if (parts.length <= 2) return text.trim();
+  return (parts[0] + "." + parts[1] + ".").trim();
+}
+
 // ======= Word-click Wikipedia Popup + TTS =======
 document.addEventListener("click", async (e) => {
   const validTags = ["P", "SPAN", "LI", "H1", "H2", "H3", "H4"];
@@ -124,6 +153,11 @@ document.addEventListener("click", async (e) => {
   const selection = window.getSelection();
   const word = selection.toString().trim() || e.target.innerText.trim();
   if (!word || /\s/.test(word) || word.length < 2) return;
+
+  // Create chunked version of the word
+  const selectedWord = word;
+  const parts = chunkWord(selectedWord);
+  const chunked = parts.join(" • ");
 
   // Remove previous card
   const oldCard = document.getElementById("lucid-word-card");
@@ -155,18 +189,14 @@ document.addEventListener("click", async (e) => {
     if (data.type === "https://mediawiki.org/wiki/HyperSwitch/errors/not_found")
       throw new Error("No page found");
 
-    // Truncate extract to first 2 sentences
+    // Trim extract after second full stop
     let truncatedExtract = data.extract || "No description available.";
     if (data.extract) {
-      const sentences = data.extract.split(".");
-      if (sentences.length >= 2) {
-        truncatedExtract = sentences[0].trim() + ". " + sentences[1].trim() + ".";
-      } else if (sentences.length === 1 && sentences[0].trim()) {
-        truncatedExtract = sentences[0].trim() + ".";
-      }
+      truncatedExtract = trimAfterSecondFullStop(data.extract);
     }
 
     let html = `
+            <div class="chunked-word">${chunked}</div>
             <strong>${data.title || word}</strong>
             <p>${truncatedExtract}</p>
             <p style="margin-top:10px;font-size:14px;color:#888;">
@@ -214,7 +244,10 @@ document.addEventListener("click", async (e) => {
       }
     );
   } catch (err) {
-    card.innerHTML = `<p>No information found.</p>`;
+    card.innerHTML = `
+      <div class="chunked-word">${chunked}</div>
+      <p>No information found.</p>
+    `;
   }
 
   // Close when clicking outside

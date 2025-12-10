@@ -33,6 +33,13 @@ body.read-ease-mode span {
     margin-bottom: 1.1em !important;
 }
 
+/* ===== Word Chunking in Popup ===== */
+.chunked-word {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
 /* ===== Focus Contrast Mode - Comprehensive Dark Theme ===== */
 
 /* Base dark theme for html and body */
